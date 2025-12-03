@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -13,7 +13,7 @@ import {
 } from "react-icons/fi";
 import { FaUsers } from "react-icons/fa6";
 
-export default function SidebarLayout({ children }) {
+export default function SidebarLayout({ children }:{children:ReactNode}) {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
 
