@@ -7,7 +7,7 @@ export default function ViewBooking({ params }) {
 const {id}= use(params);
 console.log(use(params))
   useEffect(() => {
-    fetch(`http://localhost:4000/api/bookings/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/${id}`)
       .then((res) => res.json())
       .then((data) => setBooking(data.data));
   }, [id]);

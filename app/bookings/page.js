@@ -9,7 +9,7 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/bookings")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`)
       .then((res) => res.json())
       .then((data) => {
        
@@ -22,7 +22,7 @@ export default function Bookings() {
   const handleDelete = async (id) => {
     if (!confirm("Delete this booking?")) return;
 
-    await fetch(`http://localhost:4000/api/bookings/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/${id}`, {
       method: "DELETE",
     });
 

@@ -25,7 +25,7 @@ export default function EditBooking({ params }) {
 
   // ✅ Fetch booking by ID
   useEffect(() => {
-    fetch(`http://localhost:4000/api/bookings/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/${id}`)
       .then((res) => res.json())
       .then(({data}) => {
         setForm({
@@ -54,7 +54,7 @@ export default function EditBooking({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await fetch(`http://localhost:4000/api/bookings/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}i/bookings/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
