@@ -44,7 +44,7 @@ try{
   });
 
   const data= await response.json();
-  if(data.status==='success'){
+  if(data.success){
     router.push("/bookings");
   }
  
