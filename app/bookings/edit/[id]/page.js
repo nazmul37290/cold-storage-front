@@ -54,7 +54,7 @@ export default function EditBooking({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}i/bookings/${id}`, {
+   const response= await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -66,8 +66,10 @@ export default function EditBooking({ params }) {
         balance: Number(form.balance),
       }),
     });
-
-    router.push("/bookings");
+const data = await response.json();
+if(data.success){
+  router.push("/bookings");
+}
   };
 
   if (loading) return <p className="p-6">Loading...</p>;
