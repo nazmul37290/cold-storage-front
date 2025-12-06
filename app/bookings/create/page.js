@@ -27,21 +27,32 @@ export default function CreateBooking() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(process.env.NEXT_PUBLIC_API_URL)
+try{
 
-    await fetch("http://localhost:5000/api/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        qty: Number(form.qty),
-        rate: Number(form.rate),
-        amount: Number(form.amount),
-        paid: Number(form.paid),
-        balance: Number(form.balance),
-      }),
-    });
+ const response=  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...form,
+      qty: Number(form.qty),
+      rate: Number(form.rate),
+      amount: Number(form.amount),
+      paid: Number(form.paid),
+      balance: Number(form.balance),
+    }),
+  });
 
+  const data= await response.json();
+  if(data.status==='success'){
     router.push("/bookings");
+  }
+ 
+}catch(err){
+  console.log(err)
+}
+
+    
   };
 
   return (
@@ -52,7 +63,7 @@ export default function CreateBooking() {
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
-        <Input name="sl" label="SL No" value={form.sl} onChange={handleChange} />
+        <Input name="sl" label="SL No"  value={form.sl} onChange={handleChange} />
         <Input
           name="bookingType"
           label="Booking Type"
@@ -149,7 +160,7 @@ function Input({ label, ...props }) {
       <label className="text-sm text-slate-600 mb-1 block">{label}</label>
       <input
         {...props}
-        className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full border rounded-lg px-3 py-2 text-black border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
     </div>
   );
