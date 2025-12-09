@@ -17,7 +17,7 @@ export default function EditBooking({ params }) {
     phone: "",
     qty: "",
     rate: "",
-    amount: "",
+    amount: form.qty * form.rate,
     paid: "",
     balance: "",
     date: "",
@@ -135,6 +135,7 @@ if(data.success){
           name="amount"
           label="Amount"
           type="number"
+          readonly
           value={form.amount}
           onChange={handleChange}
         />
@@ -173,11 +174,11 @@ if(data.success){
 
 /* ===== Reusable Components ===== */
 
-function Input({ label, ...props }) {
+function Input({readonly, label, ...props }) {
   return (
     <div>
       <label className="text-sm text-slate-600 mb-1 block">{label}</label>
-      <input
+      <input readOnly={readonly}
         {...props}
         className="w-full border text-black rounded-lg px-3 py-2 border-zinc-300"
       />
