@@ -13,12 +13,11 @@ export default function CreateBooking() {
     customerName: "",
     address: "",
     phone: "",
-    qty: "",
-    rate: "",
-    amount: "",
-    paid: "",
+    qty:0,
+    rate: 0,
+    amount: 0,
     balance: "",
-    date: "",
+    date: new Date().toISOString().split("T")[0],
   });
 
   const handleChange = (e) => {
@@ -37,8 +36,7 @@ try{
       ...form,
       qty: Number(form.qty),
       rate: Number(form.rate),
-      amount: Number(form.amount),
-      paid: Number(form.paid),
+      amount: Number(form.qty) * Number(form.rate),
       balance: Number(form.balance),
     }),
   });
@@ -116,16 +114,11 @@ try{
           name="amount"
           label="Amount"
           type="number"
-          value={form.amount}
-          onChange={handleChange}
+          value={form.qty * form.rate}
+          readonly
+         
         />
-        <Input
-          name="paid"
-          label="Paid"
-          type="number"
-          value={form.paid}
-          onChange={handleChange}
-        />
+        
 
         <Input
           name="balance"
@@ -154,11 +147,12 @@ try{
 
 /* ===== Reusable Components ===== */
 
-function Input({ label, ...props }) {
+function Input({readonly, label, ...props }) {
   return (
     <div>
       <label className="text-sm text-slate-600 mb-1 block">{label}</label>
       <input
+      readOnly={readonly}
         {...props}
         className="w-full border rounded-lg px-3 py-2 text-black border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
