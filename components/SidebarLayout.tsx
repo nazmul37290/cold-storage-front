@@ -8,12 +8,13 @@ import {
     FiHome,
     FiFileText,
     FiSettings,
-
+    
     FiUser,
 } from "react-icons/fi";
 import { FaUsers } from "react-icons/fa6";
+import { GiExitDoor } from "react-icons/gi";
 
-export default function SidebarLayout({ children }:{children:ReactNode}) {
+export default function SidebarLayout({ children }: { children: ReactNode }) {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
 
@@ -21,6 +22,7 @@ export default function SidebarLayout({ children }:{children:ReactNode}) {
         { name: "Home", href: "/", icon: FiHome },
         { name: "Customers", href: "/customers", icon: FaUsers },
         { name: "Bookings", href: "/bookings", icon: FiFileText },
+        { name: "Stock In", href: "/stock-in", icon: GiExitDoor },
         { name: "Profile", href: "/profile", icon: FiUser },
         { name: "Settings", href: "/settings", icon: FiSettings },
     ];
