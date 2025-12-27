@@ -2,30 +2,30 @@
 
 import { use, useEffect, useState } from "react";
 
-export default function ViewStockIn({ params }) {
-  const [stockIn, setStockIn] = useState(null);
+export default function ViewStockOut({ params }) {
+  const [stockOut, setStockOut] = useState(null);
   const { id } = use(params);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-outs/${id}`)
       .then((res) => res.json())
-      .then((data) => setStockIn(data.data));
+      .then((data) => setStockOut(data.data));
   }, [id]);
 
-  if (!stockIn) return <p>Loading...</p>;
+  if (!stockOut) return <p>Loading...</p>;
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow border p-6">
-      <h2 className="text-xl font-bold mb-6 text-black">Stock IN Details</h2>
+      <h2 className="text-xl font-bold mb-6 text-black">Stock OUT Details</h2>
 
       <div className="grid md:grid-cols-2 gap-4 text-sm">
-        <Field label="SR No" value={stockIn.srNo} />
-        <Field label="Booking No" value={stockIn.bookingNo} />
-        <Field label="Customer Name" value={stockIn.customerName} />
-        <Field label="Bags IN" value={stockIn.bagsIn} />
-        <Field label="Rate" value={`৳${stockIn.rate}`} />
-        <Field label="Total Amount" value={`৳${stockIn.totalAmount}`} />
-        <Field label="Stock IN Date" value={stockIn.date} />
+        <Field label="SR No" value={stockOut.srNo} />
+        <Field label="Booking No" value={stockOut.bookingNo} />
+        <Field label="Customer Name" value={stockOut.customerName} />
+        <Field label="Bags OUT" value={stockOut.bagsOut} />
+        <Field label="Rate" value={`৳${stockOut.rate}`} />
+        <Field label="Total Amount" value={`৳${stockOut.totalAmount}`} />
+        <Field label="Stock OUT Date" value={stockOut.date} />
       </div>
     </div>
   );

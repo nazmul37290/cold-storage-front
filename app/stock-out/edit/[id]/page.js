@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function EditStockIn({ params }) {
+export default function EditStockOut({ params }) {
   const router = useRouter();
   const { id } = use(params);
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ export default function EditStockIn({ params }) {
     srNo: "",
     bookingNo: "",
     customerName: "",
-    bagsIn: 0,
+    bagsOut: 0,
     rate: 0,
     totalAmount: 0,
     date: new Date().toISOString().split("T")[0],
@@ -20,14 +20,14 @@ export default function EditStockIn({ params }) {
 
   // ✅ Fetch stock-in by ID
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-outs/${id}`)
       .then((res) => res.json())
       .then(({ data }) => {
         setForm({
           srNo: data.srNo || "",
           bookingNo: data.bookingNo || "",
           customerName: data.customerName || "",
-          bagsIn: data.bagsIn || 0,
+          bagsOut: data.bagsOut || 0,
           rate: data.rate || 0,
           totalAmount: data.totalAmount || 0,
           date: data.date?.split("T")[0] || new Date().toISOString().split("T")[0],
@@ -41,8 +41,8 @@ export default function EditStockIn({ params }) {
     const updatedForm = { ...form, [name]: value };
     
     // Calculate total amount when bagsIn or rate changes
-    if (name === "bagsIn" || name === "rate") {
-      updatedForm.totalAmount = Number(updatedForm.bagsIn) * Number(updatedForm.rate);
+    if (name === "bagsOut" || name === "rate") {
+      updatedForm.totalAmount = Number(updatedForm.bagsOut) * Number(updatedForm.rate);
     }
     
     setForm(updatedForm);
@@ -52,20 +52,20 @@ export default function EditStockIn({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-outs/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
-        bagsIn: Number(form.bagsIn),
+        bagsOut: Number(form.bagsOut),
         rate: Number(form.rate),
-        totalAmount: Number(form.bagsIn) * Number(form.rate),
+        totalAmount: Number(form.bagsOut) * Number(form.rate),
       }),
     });
     
     const data = await response.json();
     if (data.success) {
-      router.push("/stock-in");
+      router.push("/stock-out");
     }
   };
 
@@ -73,7 +73,7 @@ export default function EditStockIn({ params }) {
 
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-xl shadow border p-6">
-      <h2 className="text-xl font-bold mb-6 text-black">Edit Stock IN</h2>
+      <h2 className="text-xl font-bold mb-6 text-black">Edit Stock OUT</h2>
 
       <form
         onSubmit={handleSubmit}
@@ -101,10 +101,10 @@ export default function EditStockIn({ params }) {
         />
 
         <Input
-          name="bagsIn"
-          label="Bags IN"
+          name="bagsOut"
+          label="Bags OUT"
           type="number"
-          value={form.bagsIn}
+          value={form.bagsOut}
           onChange={handleChange}
         />
 
@@ -126,7 +126,7 @@ export default function EditStockIn({ params }) {
 
         <Input
           name="date"
-          label="Stock IN Date"
+          label="Stock Out Date"
           type="date"
           value={form.date}
           onChange={handleChange}
@@ -137,7 +137,7 @@ export default function EditStockIn({ params }) {
             type="submit"
             className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
           >
-            Update Stock IN
+            Update Stock OUT
           </button>
         </div>
       </form>
