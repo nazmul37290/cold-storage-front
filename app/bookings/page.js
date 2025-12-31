@@ -29,6 +29,8 @@ export default function Bookings() {
     setBookings((prev) => prev.filter((item) => item._id !== id));
   };
 
+  console.log(bookings)
+
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -52,12 +54,12 @@ export default function Bookings() {
             <tr>
               <th className="p-3 text-left">SL</th>
               <th className="p-3 text-left">Booking No</th>
+              <th className="p-3 text-right">Booking Type</th>
               <th className="p-3 text-left">Customer</th>
               <th className="p-3 text-left">Phone</th>
               <th className="p-3 text-center">Qty</th>
+              <th className="p-3 text-right">Rate</th>
               <th className="p-3 text-right">Amount</th>
-              <th className="p-3 text-right">Paid</th>
-              <th className="p-3 text-right">Balance</th>
               <th className="p-3 text-center">Action</th>
             </tr>
           </thead>
@@ -67,14 +69,13 @@ export default function Bookings() {
               <tr key={item._id} className="border-b text-zinc-500 hover:bg-slate-50">
                 <td className="p-3">{index + 1}</td>
                 <td className="p-3 font-medium">{item.bookingNo}</td>
+                <td className="p-3 font-medium">{item.bookingType}</td>
                 <td className="p-3">{item.customerName}</td>
                 <td className="p-3">{item.phone}</td>
                 <td className="p-3 text-center">{item.qty}</td>
-                <td className="p-3 text-right">৳{item.amount}</td>
-                <td className="p-3 text-right">৳{item.paid}</td>
-                <td className="p-3 text-right text-red-500">
-                  ৳{item.balance}
-                </td>
+                <td className="p-3 text-center">{item.rate}</td>
+                <td className="p-3 text-right">৳{item.amount}</td>  
+                
                 <td className="p-3">
                   <div className="flex justify-center gap-2">
                     <Link
