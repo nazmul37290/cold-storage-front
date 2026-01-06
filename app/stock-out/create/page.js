@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function CreateStockOut() {
   const router = useRouter();
+const [srNo, setSrNo] = useState("");
+const [availableBags,setAvailableBags]=useState(0)
 
   const [form, setForm] = useState({
     srNo: "",
@@ -16,9 +18,16 @@ export default function CreateStockOut() {
     date: new Date().toISOString().split("T")[0],
   });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  setForm((prev) => ({ ...prev, [name]: value }));
+
+  if (name === "srNo") {
+    setSrNo(value);
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,6 +56,44 @@ export default function CreateStockOut() {
       console.log(err);
     }
   };
+  useEffect(() => {
+  if (!srNo) return;
+
+  const timer = setTimeout(async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stock-outs/by-sr/${srNo}`
+      );
+
+     
+
+      const data = await res.json();
+
+      if (data.success) {
+        setForm((prev) => ({
+          ...prev,
+          customerName: data?.data?.customerName,
+          bookingNo: data?.data?.bookingNo,
+        }));
+        setAvailableBags(data?.data?.availableBags);
+      } else {
+        
+        setForm((prev) => ({
+          ...prev,
+          customerName: "",
+          bookingNo: "",
+        }));
+
+        setAvailableBags(0)
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, 500); // ⏱️ 500ms debounce delay
+
+  // ✅ Cleanup (important)
+  return () => clearTimeout(timer);
+}, [srNo]);
 
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-xl shadow border p-6">
@@ -68,6 +115,7 @@ export default function CreateStockOut() {
           label="Booking No"
           value={form.bookingNo}
           onChange={handleChange}
+          readonly={true}
         />
 
         <Input
@@ -75,6 +123,13 @@ export default function CreateStockOut() {
           label="Customer Name"
           value={form.customerName}
           onChange={handleChange}
+          readonly={true}
+        />
+        <Input
+          name=""
+          label="Available Bags "
+          value={availableBags}
+          readonly={true}
         />
 
         <Input
