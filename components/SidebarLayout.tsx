@@ -17,7 +17,6 @@ import { GoReport } from "react-icons/go";
 import { GiEntryDoor, GiExitDoor } from "react-icons/gi";
 
 export default function SidebarLayout({ children }: { children: ReactNode }) {
-export default function SidebarLayout({ children }: { children: ReactNode }) {
     const [open, setOpen] = useState(false);
     const [expandedAccordion, setExpandedAccordion] = useState<string | null>(null);
     const pathname = usePathname();

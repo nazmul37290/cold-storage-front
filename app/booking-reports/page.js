@@ -9,6 +9,7 @@ const formatBookingsForExcel = (data = []) => {
   return data.map((item, index) => ({
     "SL": index + 1,
     "Booking No": item.bookingNo,
+    "Booking type": item.bookingType,
     "Customer Name": item.customerName,
     "Phone": item.phone,
     "Address": item.address,
@@ -25,6 +26,7 @@ const Reports = () => {
     const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "individual");
     const [loading, setLoading] = useState(false);
     const [reportData, setReportData] = useState(null);
+    const [bookingType, setBookingType] = useState('paid');
     const [metadata, setMetadata] = useState(null);
     
     // Individual tab state
@@ -57,6 +59,7 @@ const Reports = () => {
                 params: {
                     startDate: individualStartDate,
                     endDate: individualEndDate,
+                      bookingType: bookingType,
                 },
             });
             setReportData(response.data);
@@ -86,6 +89,7 @@ const Reports = () => {
                 params: {
                     startDate: startDate,
                     endDate: endDate,
+                  
                 },
             });
             setMetadata(response.data);
@@ -161,7 +165,7 @@ const excelData = ([metadata.data]);
                         <CardTitle>Individual Date Report</CardTitle>
                     </CardHeader>
                     <div className="p-6 space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-3 gap-4">
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-slate-700">
                                 Select Start Date
@@ -183,6 +187,16 @@ const excelData = ([metadata.data]);
                                 onChange={(e) => setIndividualEndDate(e.target.value)}
                                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-slate-700">
+                                Select Booking Type
+                            </label>
+                            <select value={bookingType} onChange={(e)=>setBookingType(e.target.value)} 
+                            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value={'paid'}>Paid</option>
+                                <option value={'normal'}>Normal</option>
+                            </select>
                         </div>
                         </div>
 
@@ -207,7 +221,7 @@ const excelData = ([metadata.data]);
                             Export to Excel
                         </button>
                     </div>
-                    <div className="bg-white rounded-lg border border-red-300 shadow max-w-7xl">
+                    <div className="bg-white rounded-lg  shadow max-w-7xl">
   {/* scroll container */}
   <div className=" overflow-x-auto ">
     <table className=" text-sm ">
