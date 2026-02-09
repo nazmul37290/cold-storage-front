@@ -14,7 +14,9 @@ import {
 } from "react-icons/fi";
 import { FaUsers } from "react-icons/fa6";
 import { GoReport } from "react-icons/go";
+import { GiEntryDoor, GiExitDoor } from "react-icons/gi";
 
+export default function SidebarLayout({ children }: { children: ReactNode }) {
 export default function SidebarLayout({ children }: { children: ReactNode }) {
     const [open, setOpen] = useState(false);
     const [expandedAccordion, setExpandedAccordion] = useState<string | null>(null);
@@ -29,6 +31,8 @@ export default function SidebarLayout({ children }: { children: ReactNode }) {
                 { name: "Booking reports", href: "/booking-reports", icon: FiFileText },
             ]
         },
+        { name: "Stock In", href: "/stock-in", icon: GiExitDoor },
+        { name: "Stock Out", href: "/stock-out", icon: GiEntryDoor },
         { name: "Profile", href: "/profile", icon: FiUser },
         { name: "Settings", href: "/settings", icon: FiSettings },
     ];
@@ -106,6 +110,7 @@ export default function SidebarLayout({ children }: { children: ReactNode }) {
                                     </>
                                 ) : (
                                     <Link
+                                prefetch
                                         href={item.href}
                                         onClick={() => setOpen(false)}
                                         className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition

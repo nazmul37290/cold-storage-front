@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 
 export default function CreateBooking() {
   const router = useRouter();
+  const [error,setError]=useState('')
 
   const [form, setForm] = useState({
     sl: "",
-    bookingType: "",
+    bookingType: "normal book",
     bookingNo: "",
     customerName: "",
     address: "",
@@ -16,7 +17,7 @@ export default function CreateBooking() {
     qty:0,
     rate: 0,
     amount: 0,
-    balance: "",
+   
     date: new Date().toISOString().split("T")[0],
   });
 
@@ -26,7 +27,8 @@ export default function CreateBooking() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(process.env.NEXT_PUBLIC_API_URL)
+setError('')
+
 try{
 
  const response=  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`, {
@@ -37,7 +39,7 @@ try{
       qty: Number(form.qty),
       rate: Number(form.rate),
       amount: Number(form.qty) * Number(form.rate),
-      balance: Number(form.balance),
+    
     }),
   });
 
@@ -45,8 +47,10 @@ try{
   if(data.success){
     router.push("/bookings");
   }
+  console.log(data)
  
 }catch(err){
+  setError(err.message)
   console.log(err)
 }
 
@@ -62,12 +66,12 @@ try{
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
         <Input name="sl" label="SL No"  value={form.sl} onChange={handleChange} />
-        <Input
-          name="bookingType"
+        <Select name="bookingType"
           label="Booking Type"
           value={form.bookingType}
-          onChange={handleChange}
-        />
+          onChange={handleChange}>
+
+        </Select>
 
         <Input
           name="bookingNo"
@@ -120,13 +124,7 @@ try{
         />
         
 
-        <Input
-          name="balance"
-          label="Balance"
-          type="number"
-          value={form.balance}
-          onChange={handleChange}
-        />
+       
         <Input
           name="date"
           label="Booking Date"
@@ -136,6 +134,7 @@ try{
         />
 
         <div className="md:col-span-2 flex justify-end mt-4">
+        <p className="text-red-600">{error}</p>
           <button className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
             Save Booking
           </button>
@@ -166,11 +165,11 @@ function Select({ label, ...props }) {
       <label className="text-sm text-slate-600 mb-1 block">{label}</label>
       <select
         {...props}
-        className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full border text-black rounded-lg px-3 py-2 border-zinc-300"
       >
-        <option value="Normal">Normal</option>
-        <option value="Urgent">Urgent</option>
-        <option value="VIP">VIP</option>
+        <option  value="normal book">Normal Book</option>
+        <option value="paid book">Paid Book</option>
+       
       </select>
     </div>
   );

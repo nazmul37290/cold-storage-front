@@ -17,9 +17,8 @@ export default function EditBooking({ params }) {
     phone: "",
     qty: "",
     rate: "",
-    amount: form.qty * form.rate,
-    paid: "",
-    balance: "",
+    amount: 0,
+    
     date: "",
   });
 
@@ -38,8 +37,7 @@ export default function EditBooking({ params }) {
           qty: data.qty || "",
           rate: data.rate || "",
           amount: data.amount || "",
-          paid: data.paid || "",
-          balance: data.balance || "",
+       
           date: data.date?.split("T")[0] || "",
         });
         setLoading(false);
@@ -61,9 +59,8 @@ export default function EditBooking({ params }) {
         ...form,
         qty: Number(form.qty),
         rate: Number(form.rate),
-        amount: Number(form.amount),
-        paid: Number(form.paid),
-        balance: Number(form.balance),
+        amount: Number(form.qty) * Number(form.rate),
+        
       }),
     });
 const data = await response.json();
@@ -83,12 +80,14 @@ if(data.success){
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
         <Input name="sl" label="SL No" value={form.sl} onChange={handleChange} />
-        <Input
-          name="bookingType"
+
+        <Select name="bookingType"
           label="Booking Type"
           value={form.bookingType}
-          onChange={handleChange}
-        />
+          onChange={handleChange}>
+
+        </Select>
+        
 
         <Input
           name="bookingNo"
@@ -139,21 +138,9 @@ if(data.success){
           value={form.amount}
           onChange={handleChange}
         />
-        <Input
-          name="paid"
-          label="Paid"
-          type="number"
-          value={form.paid}
-          onChange={handleChange}
-        />
+       
 
-        <Input
-          name="balance"
-          label="Balance"
-          type="number"
-          value={form.balance}
-          onChange={handleChange}
-        />
+       
         <Input
           name="date"
           label="Booking Date"
@@ -192,11 +179,11 @@ function Select({ label, ...props }) {
       <label className="text-sm text-slate-600 mb-1 block">{label}</label>
       <select
         {...props}
-        className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full border text-black rounded-lg px-3 py-2 border-zinc-300"
       >
-        <option value="Normal">Normal</option>
-        <option value="Urgent">Urgent</option>
-        <option value="VIP">VIP</option>
+        <option value="normal book">Normal Book</option>
+        <option value="paid book">Paid Book</option>
+       
       </select>
     </div>
   );
