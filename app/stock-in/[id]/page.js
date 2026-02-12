@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+import formatGlobalDate from "../../../lib/formatGlobalDate";
 
 export default function ViewStockIn({ params }) {
   const [stockIn, setStockIn] = useState(null);
@@ -21,11 +22,10 @@ export default function ViewStockIn({ params }) {
       <div className="grid md:grid-cols-2 gap-4 text-sm">
         <Field label="SR No" value={stockIn.srNo} />
         <Field label="Booking No" value={stockIn.bookingNo} />
-        <Field label="Customer Name" value={stockIn.customerName} />
+        <Field label="Customer Name" value={stockIn.bookingId?.customerName} />
         <Field label="Bags IN" value={stockIn.bagsIn} />
-        <Field label="Rate" value={`৳${stockIn.rate}`} />
-        <Field label="Total Amount" value={`৳${stockIn.totalAmount}`} />
-        <Field label="Stock IN Date" value={stockIn.date} />
+        <Field label="Rate" value={`৳${stockIn.bookingId?.rate}`} />
+        <Field label="Stock IN Date" value={formatGlobalDate(stockIn.date)} />
       </div>
     </div>
   );

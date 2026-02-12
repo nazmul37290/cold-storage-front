@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import formatGlobalDate from '../../lib/formatGlobalDate.ts'
 import { FiEye, FiEdit, FiTrash, FiPlus } from "react-icons/fi";
-
 export default function StockIn() {
   const [stockIn, setStockIn] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,11 +21,16 @@ export default function StockIn() {
   const handleDelete = async (id) => {
     if (!confirm("Delete this Stock IN record?")) return;
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-in/${id}`, {
+   const response= await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins/${id}`, {
       method: "DELETE",
     });
-
-    setStockIn((prev) => prev.filter((item) => item._id !== id));
+const data= await response.json();
+    console.log(data)
+if(data.success){
+  setStockIn((prev) => prev.filter((item) => item._id !== id));
+}else{
+  alert('Something went wrong')
+}
   };
 
   if (loading) return <p>Loading...</p>;
@@ -55,7 +60,6 @@ export default function StockIn() {
               <th className="p-3 text-left">Customer</th>
               <th className="p-3 text-center">Bags IN</th>
               <th className="p-3 text-right">Rate</th>
-              <th className="p-3 text-right">Total Amount</th>
               <th className="p-3 text-left">Date</th>
               <th className="p-3 text-center">Action</th>
             </tr>
@@ -70,13 +74,11 @@ export default function StockIn() {
                 <td className="p-3">{index + 1}</td>
                 <td className="p-3 font-medium">{item.srNo}</td>
                 <td className="p-3">{item.bookingNo}</td>
-                <td className="p-3">{item.customerName}</td>
+                <td className="p-3">{item.bookingId?.customerName}</td>
                 <td className="p-3 text-center">{item.bagsIn}</td>
-                <td className="p-3 text-right">৳{item.rate}</td>
-                <td className="p-3 text-right font-medium">
-                  ৳{item.totalAmount}
-                </td>
-                <td className="p-3">{item.date}</td>
+                <td className="p-3 text-right">৳{item.bookingId?.rate}</td>
+                
+                <td className="p-3"> { formatGlobalDate(item.date)}</td>
                 <td className="p-3">
                   <div className="flex justify-center gap-2">
                     <Link
