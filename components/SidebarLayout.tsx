@@ -28,6 +28,7 @@ export default function SidebarLayout({ children }: { children: ReactNode }) {
         {
             name: "Reports", href: "/reports", icon: GoReport, children: [
                 { name: "Booking reports", href: "/booking-reports", icon: FiFileText },
+                { name: "Stock In reports", href: "/stockin-reports", icon: FiFileText },
             ]
         },
         { name: "Stock In", href: "/stock-in", icon: GiExitDoor },
