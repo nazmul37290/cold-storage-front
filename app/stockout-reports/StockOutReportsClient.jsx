@@ -27,7 +27,11 @@ const StockOutReportsClient = () => {
     const [bookingNo, setBookingNo] = useState('');
     const [srNo, setSrNo] = useState('');
     const [metadata, setMetadata] = useState(null);
-
+    const [summary, setSummary] = useState({
+        totalStockOuts: reportData?.data?.length,
+        totalBagsOut: reportData?.data?.reduce((acc,cur)=>acc.bagsOut+cur,0)
+    })
+console.log(summary)
     // Individual tab state
     const [individualStartDate, setIndividualStartDate] = useState("");
     const [individualEndDate, setIndividualEndDate] = useState("");
@@ -42,15 +46,7 @@ const StockOutReportsClient = () => {
     }, [activeTab, router]);
 
     const fetchIndividualReport = async () => {
-        // if (!individualStartDate) {
-        //     alert("Please select a start date");
-        //     return;
-        // }
-        // if (!individualEndDate) {
-        //     alert("Please select a end date");
-        //     return;
-        // }
-
+      
         setLoading(true);
         try {
             // Replace with your actual API endpoint
@@ -63,6 +59,10 @@ const StockOutReportsClient = () => {
                 },
             });
             setReportData(response.data);
+            setSummary({
+                totalStockOuts:response.data.data.length,
+                totalBagsOut: response.data.data.reduce((acc, cur) => acc + cur.bagsOut, 0)
+            })
         } catch (error) {
             console.error("Error fetching report:", error);
             alert("Failed to fetch report. Please try again.");
@@ -128,6 +128,8 @@ const StockOutReportsClient = () => {
 
         XLSX.writeFile(wb, filename);
     };
+
+    
     return (
         <div className="max-w-full">
             <h2 className="text-xl font-bold mb-6 text-slate-800">Stock Out Reports</h2>
@@ -218,6 +220,8 @@ const StockOutReportsClient = () => {
                             </button>
                         </div>
                     </Card>
+
+
                     {/* Report Data Display */}
                     {reportData?.success && (
                         <div className="mt-8">
@@ -229,6 +233,14 @@ const StockOutReportsClient = () => {
                                 >
                                     Export to Excel
                                 </button>
+                            </div>
+                            <div className="my-4 flex gap-4 flex-wrap">
+                                <div className="bg-white border shadow rounded-md p-10 flex items-center justify-center w-fit">
+                                    <p className="font-medium  flex flex-col text-center"> <span className="font-semibold text-2xl">{summary?.totalStockOuts}</span>Stock Outs</p>
+                                </div>
+                                <div className="bg-white border shadow rounded-md p-10 flex items-center justify-center w-fit">
+                                    <p className="font-medium  flex flex-col text-center"> <span className="font-semibold text-2xl">{summary?.totalBagsOut}</span>Bags Out</p>
+                                </div>
                             </div>
                             <div className="bg-white rounded-lg  shadow w-full">
                                 {/* scroll container */}
