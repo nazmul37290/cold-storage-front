@@ -18,13 +18,14 @@ const formatBookingsForExcel = (data = []) => {
     }));
 };
 
-const StockInReportsClient = () => {
+const StockOutReportsClient = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "individual");
     const [loading, setLoading] = useState(false);
     const [reportData, setReportData] = useState(null);
     const [bookingNo, setBookingNo] = useState('');
+    const [srNo, setSrNo] = useState('');
     const [metadata, setMetadata] = useState(null);
 
     // Individual tab state
@@ -53,11 +54,12 @@ const StockInReportsClient = () => {
         setLoading(true);
         try {
             // Replace with your actual API endpoint
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stock-outs`, {
                 params: {
-                    startDate: individualStartDate,
-                    endDate: individualEndDate,
-                    bookingNo: bookingNo,
+                    ...(individualStartDate && { startDate: individualStartDate }),
+                    ...(individualEndDate && { endDate: individualEndDate }),
+                    ...(bookingNo && { bookingNo }),
+                    ...(srNo && { srNo }),
                 },
             });
             setReportData(response.data);
@@ -83,7 +85,7 @@ const StockInReportsClient = () => {
         setLoading(true);
         try {
             // Replace with your actual API endpoint
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins/custom-report`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stock-outs/custom-report`, {
                 params: {
                     startDate: startDate,
                     endDate: endDate,
@@ -128,7 +130,7 @@ const StockInReportsClient = () => {
     };
     return (
         <div className="max-w-full">
-            <h2 className="text-xl font-bold mb-6 text-slate-800">Stock In Reports</h2>
+            <h2 className="text-xl font-bold mb-6 text-slate-800">Stock Out Reports</h2>
 
             {/* Tabs */}
             <div className="flex gap-2 mb-6 border-b">
@@ -160,7 +162,7 @@ const StockInReportsClient = () => {
                             <CardTitle>Individual Date Report</CardTitle>
                         </CardHeader>
                         <div className="p-6 space-y-4">
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-4 gap-4">
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-slate-700">
                                         Select Start Date
@@ -188,6 +190,17 @@ const StockInReportsClient = () => {
                                         Booking No
                                     </label>
                                     <input type="text" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" value={bookingNo} onChange={(e)=>setBookingNo(e.target.value)} />
+                                    {/* <select value={bookingType} onChange={(e) => setBookingType(e.target.value)}
+                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value={'paid'}>Paid</option>
+                                        <option value={'normal'}>Normal</option>
+                                    </select> */}
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-medium text-slate-700">
+                                        SR No
+                                    </label>
+                                    <input type="text" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" value={srNo} onChange={(e)=>setSrNo(e.target.value)} />
                                     {/* <select value={bookingType} onChange={(e) => setBookingType(e.target.value)}
                                         className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                         <option value={'paid'}>Paid</option>
@@ -252,8 +265,7 @@ const StockInReportsClient = () => {
                                                         
                                                         className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
                                                     >
-                                                       Bags In
-                                                    </th>
+                                                       Bags out                                                   </th>
                                                     <th
                                                         
                                                         className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
@@ -302,7 +314,7 @@ const StockInReportsClient = () => {
                                                     <td
                                                         className="px-4 py-3 text-slate-700 align-top"
                                                     >
-                                                        {row.bagsIn}
+                                                        {row.bagsOut}
                                                     </td>
                                                     <td
                                                         className="px-4 py-3 text-slate-700 align-top"
@@ -426,4 +438,4 @@ const StockInReportsClient = () => {
     )
 };
 
-export default StockInReportsClient;
+export default StockOutReportsClient;

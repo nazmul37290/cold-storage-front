@@ -12,8 +12,6 @@ export default function CreateStockIn() {
     bookingId: "",
     bookingNo: "",
     bagsIn: 0,
-    rate: 0,
-    totalAmount: 0,
     date: new Date().toISOString().split("T")[0],
   });
 
@@ -69,11 +67,6 @@ export default function CreateStockIn() {
     fetchBookings();
   }, []);
 
-  useEffect(() => {
-    // compute total amount when bagsIn or rate change
-    setForm((prev) => ({ ...prev, totalAmount: Number(prev.bagsIn) * Number(prev.rate) }));
-  }, [form.bagsIn, form.rate]);
-
   // simple combobox helpers
   const filtered = query
     ? bookings.filter((b) => (b.bookingNo || "").toLowerCase().includes(query.toLowerCase()))
@@ -86,13 +79,10 @@ export default function CreateStockIn() {
       bookingId: b.id || b._id || "",
       bookingNo: b.bookingNo || b.booking_no || "",
       totalBags: b.qtyOfBags || 0,
-      rate: b.rate || b.defaultRate || prev.rate,
-      totalAmount: Number(b.qtyOfBags) * Number(b.rate),
     }));
     setQuery(b.bookingNo || b.booking_no || "");
   };
 
-  console.log(query,bookings.length)
 
   return (
     <div className="flex  gap-10">

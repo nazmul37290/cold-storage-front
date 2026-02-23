@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import formatGlobalDate from '../../lib/formatGlobalDate'
 import { FiEye, FiEdit, FiTrash, FiPlus } from "react-icons/fi";
 
 export default function StockOut() {
@@ -54,8 +55,6 @@ export default function StockOut() {
               <th className="p-3 text-left">Booking No</th>
               <th className="p-3 text-left">Customer</th>
               <th className="p-3 text-center">Bags OUT</th>
-              <th className="p-3 text-right">Rate</th>
-              <th className="p-3 text-right">Total Amount</th>
               <th className="p-3 text-left">Date</th>
               <th className="p-3 text-center">Action</th>
             </tr>
@@ -70,13 +69,9 @@ export default function StockOut() {
                 <td className="p-3">{index + 1}</td>
                 <td className="p-3 font-medium">{item.srNo}</td>
                 <td className="p-3">{item.bookingNo}</td>
-                <td className="p-3">{item.customerName}</td>
+                <td className="p-3">{item.bookingId?.customerName}</td>
                 <td className="p-3 text-center">{item.bagsOut}</td>
-                <td className="p-3 text-right">৳{item.rate}</td>
-                <td className="p-3 text-right font-medium">
-                  ৳{item.totalAmount}
-                </td>
-                <td className="p-3">{item.date}</td>
+                <td className="p-3">{formatGlobalDate(item.date)}</td>
                 <td className="p-3">
                   <div className="flex justify-center gap-2">
                     <Link
