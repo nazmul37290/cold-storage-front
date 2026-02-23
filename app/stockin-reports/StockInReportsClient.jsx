@@ -26,6 +26,10 @@ const StockInReportsClient = () => {
     const [reportData, setReportData] = useState(null);
     const [bookingNo, setBookingNo] = useState('');
     const [metadata, setMetadata] = useState(null);
+    const [summary, setSummary] = useState({
+        totalStockIns: reportData?.data?.length,
+        totalBagsIn: reportData?.data?.reduce((acc, cur) => acc + cur.bagsIn, 0)
+    })
 
     // Individual tab state
     const [individualStartDate, setIndividualStartDate] = useState("");
@@ -61,6 +65,10 @@ const StockInReportsClient = () => {
                 },
             });
             setReportData(response.data);
+            setSummary({
+                totalStockIns: response.data.data.length,
+                totalBagsIn: response.data.data.reduce((acc, cur) => acc + cur.bagsIn, 0)
+            })
         } catch (error) {
             console.error("Error fetching report:", error);
             alert("Failed to fetch report. Please try again.");
@@ -216,6 +224,14 @@ const StockInReportsClient = () => {
                                 >
                                     Export to Excel
                                 </button>
+                            </div>
+                            <div className="my-4 flex gap-4 flex-wrap">
+                                <div className="bg-white border shadow rounded-md p-10 flex items-center justify-center w-fit">
+                                    <p className="font-medium  flex flex-col text-center"> <span className="font-semibold text-2xl">{summary?.totalStockIns}</span>Stock Ins</p>
+                                </div>
+                                <div className="bg-white border shadow rounded-md p-10 flex items-center justify-center w-fit">
+                                    <p className="font-medium  flex flex-col text-center"> <span className="font-semibold text-2xl">{summary?.totalBagsIn}</span>Bags In</p>
+                                </div>
                             </div>
                             <div className="bg-white rounded-lg  shadow w-full">
                                 {/* scroll container */}

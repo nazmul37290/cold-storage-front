@@ -29,7 +29,7 @@ const StockOutReportsClient = () => {
     const [metadata, setMetadata] = useState(null);
     const [summary, setSummary] = useState({
         totalStockOuts: reportData?.data?.length,
-        totalBagsOut: reportData?.data?.reduce((acc,cur)=>acc.bagsOut+cur,0)
+        totalBagsOut: reportData?.data?.reduce((acc,cur)=>acc+cur.bagsOut,0)
     })
 console.log(summary)
     // Individual tab state
