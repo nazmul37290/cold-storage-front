@@ -5,25 +5,26 @@ import { useRouter } from "next/navigation";
 
 export default function EditStockIn({ params }) {
   const router = useRouter();
-    const { id } = use(params);
+  const {id} = use(params);
 
   const [loading, setLoading] = useState(true);
-  
-  const [form, setForm] = useState({
-    srNo: "",
-    bookingId: "", // ✅ important
-    bookingNo: "", // display only
-    bagsIn: 0,
-    date: new Date().toISOString().split("T")[0],
-  });
-  
   const [bookings, setBookings] = useState([]);
-  const [query, setQuery] = useState();
-  const [selectedBooking, setSelectedBooking] = useState(bookings.find(booking=>booking.bookingNo===query));
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [query, setQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
-  // close dropdown on outside click
+  const [form, setForm] = useState({
+    srNo: "",
+    bookingId: "",
+    bookingNo: "",
+    bagsIn: 0,
+    date: new Date().toISOString().split("T")[0],
+  });
+
+  /* ===============================
+     Close dropdown on outside click
+  ================================= */
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -34,82 +35,59 @@ export default function EditStockIn({ params }) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  // compute total amount when bagsIn or rate change
-  useEffect(() => {
-    setForm((prev) => ({
-      ...prev,
-      totalAmount: Number(prev.bagsIn) * Number(prev.rate),
-    }));
-  }, [form.bagsIn, form.rate]);
-
-  // fetch bookings list (for combobox)
+  /* ===============================
+     Fetch bookings list
+  ================================= */
   useEffect(() => {
     const fetchBookings = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`);
-        const data = await res.json();
-        setBookings(data.data || []);
-      } catch (err) {
-        console.error("Failed to load bookings", err);
-      }
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`);
+      const data = await res.json();
+      setBookings(data.data || []);
     };
+
     fetchBookings();
   }, []);
 
-  // ✅ fetch stock-in by ID (and prefill)
+  /* ===============================
+     Fetch stock-in by ID
+  ================================= */
   useEffect(() => {
     const fetchStockIn = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins/${id}`);
-        const json = await res.json();
-        const data = json.data;
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stock-ins/${id}`
+      );
+      const json = await res.json();
+      const data = json.data;
 
-        // if your backend populates bookingNo, it will be an object
-        const bookingObj =
-          data.bookingNo && typeof data.bookingNo === "object" ? data.bookingNo : null;
+      setForm({
+        srNo: data.srNo || "",
+        bookingId: data.bookingId?._id || data.bookingId || "",
+        bookingNo: data.bookingNo || "",
+        bagsIn: data.bagsIn ?? 0,
+        date:
+          data.date?.split("T")[0] ||
+          new Date().toISOString().split("T")[0],
+      });
 
-        const bookingId =
-          bookingObj?._id || data.bookingId || data.bookingNo || ""; // depends on your response
+      setQuery(data.bookingNo || "");
 
-        const bookingNoText =
-          bookingObj?.bookingNo || data.bookingNo || "";
-
-        setForm({
-          srNo: data.srNo || "",
-          bookingId: bookingId,
-          bookingNo: bookingNoText,
-          bagsIn: data.bagsIn ?? 0,
-          rate: data.rate ?? 0,
-          totalAmount: data.totalAmount ?? (Number(data.bagsIn) * Number(data.rate)) ?? 0,
-          date: (data.date ? String(data.date).split("T")[0] : new Date().toISOString().split("T")[0]),
-        });
-
-        // preselect booking panel if populated
-        if (bookingObj) {
-          setSelectedBooking(bookingObj);
-          setQuery(bookingNoText);
-        } else {
-          setQuery(bookingNoText);
-        }
-
-        setLoading(false);
-      } catch (e) {
-        console.error(e);
-        setLoading(false);
+      // if booking populated
+      if (data.bookingId && typeof data.bookingId === "object") {
+        setSelectedBooking(data.bookingId);
       }
+
+      setLoading(false);
     };
 
     fetchStockIn();
   }, [id]);
 
-  // filter bookings for dropdown
+  /* ===============================
+     Combobox filter
+  ================================= */
   const filtered = query
     ? bookings.filter((b) =>
-        String(b.bookingNo || b.booking_no || "")
+        (b.bookingNo || "")
           .toLowerCase()
           .includes(query.toLowerCase())
       )
@@ -118,39 +96,45 @@ export default function EditStockIn({ params }) {
   const onSelectBooking = (b) => {
     setSelectedBooking(b);
 
-    const bookingId = b._id || "";
+    const bookingId = b._id || b.id || "";
     const bookingNoText = b.bookingNo || b.booking_no || "";
 
     setForm((prev) => ({
       ...prev,
       bookingId,
       bookingNo: bookingNoText,
-      rate: b.rate ?? b.defaultRate ?? prev.rate,
-      totalAmount: Number(prev.bagsIn) * Number(b.rate ?? b.defaultRate ?? prev.rate),
     }));
 
     setQuery(bookingNoText);
     setShowDropdown(false);
   };
 
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  /* ===============================
+     Update API
+  ================================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
       srNo: form.srNo,
       bookingId: form.bookingId,
-      bookingNo:form.bookingNo, // ✅ send object id
+      bookingNo: form.bookingNo,
       bagsIn: Number(form.bagsIn),
       date: form.date,
     };
 
-    console.log(payload)
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/stock-ins/${id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
 
     const data = await response.json();
     if (data.success) router.push("/stock-in");
@@ -160,11 +144,22 @@ export default function EditStockIn({ params }) {
 
   return (
     <div className="flex gap-10">
-      <div className="w-full mx-auto bg-white rounded-xl shadow border p-6">
-        <h2 className="text-xl font-bold mb-6 text-black">Edit Stock IN</h2>
+      {/* ================= FORM ================= */}
+      <div className="w-full bg-white rounded-xl shadow border p-6">
+        <h2 className="text-xl font-bold mb-6 text-black">
+          Edit Stock IN
+        </h2>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input name="srNo" label="SR No" value={form.srNo} onChange={handleChange} />
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
+          <Input
+            name="srNo"
+            label="SR No"
+            value={form.srNo}
+            onChange={handleChange}
+          />
 
           <Input
             name="bagsIn"
@@ -174,9 +169,14 @@ export default function EditStockIn({ params }) {
             onChange={handleChange}
           />
 
-          {/* ✅ Combobox like Create */}
-          <div ref={dropdownRef} className="relative md:col-span-2">
-            <label className="text-sm text-slate-600 mb-1 block">Booking No</label>
+          {/* Booking Combobox */}
+          <div
+            ref={dropdownRef}
+            className="relative md:col-span-2"
+          >
+            <label className="text-sm text-slate-600 mb-1 block">
+              Booking No
+            </label>
             <input
               type="text"
               value={query}
@@ -185,21 +185,22 @@ export default function EditStockIn({ params }) {
                 setShowDropdown(true);
               }}
               onFocus={() => setShowDropdown(true)}
-              placeholder="Search booking no..."
               className="w-full border rounded-lg px-3 py-2 text-black border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
 
-            {showDropdown && query !== "" && filtered.length > 0 && (
+            {showDropdown && filtered.length > 0 && (
               <ul className="absolute z-50 left-0 right-0 mt-1 max-h-60 overflow-auto bg-white border rounded shadow">
                 {filtered.map((b) => (
                   <li
-                    key={b.id || b._id || b.bookingNo}
+                    key={b._id}
                     onClick={() => onSelectBooking(b)}
                     className="px-3 py-2 hover:bg-slate-100 cursor-pointer"
                   >
-                    <div className="text-sm font-medium">{b.bookingNo || b.booking_no}</div>
+                    <div className="text-sm font-medium">
+                      {b.bookingNo}
+                    </div>
                     <div className="text-xs text-slate-500">
-                      {b.customerName || b.customer || ""}
+                      {b.customerName}
                     </div>
                   </li>
                 ))}
@@ -216,78 +217,61 @@ export default function EditStockIn({ params }) {
           />
 
           <div className="md:col-span-2 flex justify-end mt-4">
-            <button
-              type="submit"
-              className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
-            >
+            <button className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
               Update Stock IN
             </button>
           </div>
         </form>
       </div>
 
-      {/* ✅ Booking details panel like Create */}
+      {/* ================= BOOKING DETAILS PANEL ================= */}
       <div className="bg-white p-4 w-[500px] rounded-md shadow-lg">
-        <h2 className="font-semibold text-indigo-600 uppercase">Booking Details</h2>
+        <h2 className="font-semibold text-indigo-600 uppercase">
+          Booking Details
+        </h2>
 
         <div className="mt-4 space-y-3">
-          <div>
-            <label className="text-sm text-zinc-600 mb-1 block">Booking No</label>
-            <div className="text-sm font-medium">
-              {selectedBooking ? (selectedBooking.bookingNo || selectedBooking.booking_no) : "-"}
-            </div>
-          </div>
-          <div>
-          <label className="text-sm text-zinc-600 mb-1 block">Booking Type</label>
-          <div className="text-sm font-medium">{selectedBooking?.bookingType || "-"}</div>
-        </div>
-
-          <div>
-            <label className="text-sm text-zinc-600 mb-1 block">Customer Name</label>
-            <div className="text-sm">
-              {selectedBooking ? (selectedBooking.customerName || selectedBooking.customer || "-") : "-"}
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm text-zinc-600 mb-1 block">Total Booked Bags</label>
-            <div className="text-sm">
-              {selectedBooking ? (selectedBooking.qtyOfBags ?? "-") : "-"}
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm text-zinc-600 mb-1 block">Rate</label>
-            <div className="text-sm">
-              {selectedBooking ? (selectedBooking.rate ?? selectedBooking.defaultRate ?? "-") : "-"}
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm text-zinc-600 mb-1 block">Total Amount</label>
-            <div className="text-sm">
-              {selectedBooking
-                ? Number(selectedBooking?.qtyOfBags) * Number(selectedBooking?.rate)
-                : 0}
-            </div>
-          </div>
+          <Detail label="Booking No" value={selectedBooking?.bookingNo} />
+          <Detail label="Booking Type" value={selectedBooking?.bookingType} />
+          <Detail label="Customer Name" value={selectedBooking?.customerName} />
+          <Detail label="Total Booked Bags" value={selectedBooking?.qtyOfBags} />
+          <Detail label="Rate" value={selectedBooking?.rate} />
+          <Detail
+            label="Total Amount"
+            value={
+              Number(selectedBooking?.qtyOfBags) *
+                Number(selectedBooking?.rate) || 0
+            }
+          />
         </div>
       </div>
     </div>
   );
 }
 
-/* ===== Reusable Components ===== */
+/* ================= Reusable ================= */
 
-function Input({ readonly, label, ...props }) {
+function Input({ label, ...props }) {
   return (
     <div>
-      <label className="text-sm text-slate-600 mb-1 block">{label}</label>
+      <label className="text-sm text-slate-600 mb-1 block">
+        {label}
+      </label>
       <input
-        readOnly={readonly}
         {...props}
         className="w-full border rounded-lg px-3 py-2 text-black border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
+    </div>
+  );
+}
+
+function Detail({ label, value }) {
+  return (
+    <div>
+      <label className="text-sm text-zinc-600 mb-1 block">
+        {label}
+      </label>
+      <div className="text-sm">{value ?? "-"}</div>
     </div>
   );
 }

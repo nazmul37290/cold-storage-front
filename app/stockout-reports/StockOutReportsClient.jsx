@@ -14,7 +14,7 @@ const formatBookingsForExcel = (data = []) => {
         "Booking type": item.bookingId.bookingType,
         "Booking No": item.bookingNo,
         "Sr No": item.srNo,
-        "Qty (Bags)": item.bagsIn,
+        "Qty (Bags)": item.bagsOut,
     }));
 };
 
