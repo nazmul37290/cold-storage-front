@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle } from "../../components/ui/card";
 import axios from "axios";
 import * as XLSX from "xlsx";
+import formatGlobalDate from "../../lib/formatGlobalDate";
 const formatBookingsForExcel = (data = []) => {
     return data.map((item, index) => ({
         "SL": index + 1,
@@ -44,14 +45,7 @@ const ReportsClient = () => {
     }, [activeTab, router]);
 
     const fetchIndividualReport = async () => {
-        if (!individualStartDate) {
-            alert("Please select a start date");
-            return;
-        }
-        if (!individualEndDate) {
-            alert("Please select a end date");
-            return;
-        }
+        
 
         setLoading(true);
         try {
@@ -73,10 +67,7 @@ const ReportsClient = () => {
     };
 
     const fetchCustomReport = async () => {
-        if (!startDate || !endDate) {
-            alert("Please select both start and end dates");
-            return;
-        }
+       
 
         if (new Date(startDate) > new Date(endDate)) {
             alert("Start date must be before end date");
@@ -226,33 +217,127 @@ const ReportsClient = () => {
                                     <table className=" text-sm ">
                                         <thead className="sticky top-0 z-10 bg-slate-100">
                                             <tr className="border-b">
-                                                {reportData?.data?.length > 0 &&
-                                                    Object.keys(reportData?.data[0]).map((key) => (
-                                                        <th
-                                                            key={key}
-                                                            className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
-                                                        >
-                                                            {key}
-                                                        </th>
-                                                    ))}
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    SL
+                                                </th>
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    Booking Type
+                                                </th>
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    Booking No
+                                                </th>
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    Customer Info
+                                                </th>
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    Qty of Bags
+                                                </th>
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    Rate
+                                                </th>
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    Amount
+                                                </th>
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    Advance
+                                                </th>
+                                                <th
+
+                                                    className="px-4 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                                                >
+                                                    Date
+                                                </th>
                                             </tr>
                                         </thead>
 
                                         <tbody className="divide-y">
                                             {reportData?.data?.map((row, index) => (
                                                 <tr key={index} className="hover:bg-slate-50">
-                                                    {Object.entries(row).map(([k, value], i) => (
-                                                        <td
-                                                            key={`${k}-${i}`}
-                                                            className="px-4 py-3 text-slate-700 align-top"
-                                                        >
-                                                            <div className="max-w-[260px] break-words">
-                                                                {typeof value === "object" && value !== null
-                                                                    ? JSON.stringify(value)
-                                                                    : String(value ?? "")}
-                                                            </div>
-                                                        </td>
-                                                    ))}
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        {index + 1}
+                                                    </td>
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        {row.bookingType}
+                                                    </td>
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        {row.bookingNo}
+                                                    </td>
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        <p>
+
+                                                            {row?.customerName}
+                                                        </p>
+                                                        <p>
+
+                                                            {row?.phone}
+                                                        </p>
+                                                        <p>
+
+                                                            {row?.address}
+                                                        </p>
+
+                                                    </td>
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        {row.qtyOfBags}
+                                                    </td>
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        {row.rate}
+                                                    </td>
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        {row.amount}
+                                                    </td>
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        {row.advanceAmount}
+                                                    </td>
+                                                    <td
+                                                        className="px-4 py-3 text-slate-700 align-top"
+                                                    >
+                                                        {
+                                                            formatGlobalDate(row.date)
+                                                        }
+
+                                                    </td>
+
                                                 </tr>
                                             ))}
                                         </tbody>
