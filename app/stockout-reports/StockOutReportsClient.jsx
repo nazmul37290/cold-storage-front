@@ -27,19 +27,45 @@ const StockOutReportsClient = () => {
     const [bookingNo, setBookingNo] = useState('');
     const [srNo, setSrNo] = useState('');
     const [metadata, setMetadata] = useState(null);
-    const [summary, setSummary] = useState({
-        totalStockOuts: reportData?.data?.length,
-        totalBagsOut: reportData?.data?.reduce((acc,cur)=>acc+cur.bagsOut,0)
-    })
-console.log(summary)
-    // Individual tab state
     const [individualStartDate, setIndividualStartDate] = useState("");
     const [individualEndDate, setIndividualEndDate] = useState("");
-
-    // Custom tab state
     const [startDate, setStartDate] = useState("");
+    const [stockIns, setStockIns] = useState();
     const [endDate, setEndDate] = useState("");
+    const [summary, setSummary] = useState({
+        totalStockOuts: reportData?.data?.length,
+        totalBagsOut: reportData?.data?.reduce((acc,cur)=>acc+cur.bagsOut,0),
+        remainingBags: 0
+    })
+console.log(summary)
+    const getStockIns = async () => {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins`, {
+                params: {
+                    ...(individualStartDate && { startDate: individualStartDate }),
+                    ...(individualEndDate && { endDate: individualEndDate }),
+                    ...(bookingNo && { bookingNo }),
+                    ...(srNo && { srNo }),
+                },
+            });
+            const stockIns = response.data.data
+            setStockIns(stockIns);
+            const totalStockInBags = stockIns.reduce((acc, cur) => acc + cur.bagsIn, 0)
+           return totalStockInBags
+            
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+// useEffect(()=>{
+  
 
+//     getStockIns()
+
+// },[bookingNo,srNo,individualEndDate,individualStartDate,summary.totalBagsOut])
+
+console.log(stockIns,'stockins')
     // Update URL when tab changes
     useEffect(() => {
         router.push(`?tab=${activeTab}`, { scroll: false });
@@ -59,9 +85,11 @@ console.log(summary)
                 },
             });
             setReportData(response.data);
+           const totalBagsIn=await getStockIns()
             setSummary({
                 totalStockOuts:response.data.data.length,
-                totalBagsOut: response.data.data.reduce((acc, cur) => acc + cur.bagsOut, 0)
+                totalBagsOut: response.data.data.reduce((acc, cur) => acc + cur.bagsOut, 0),
+                remainingBags:totalBagsIn - response.data.data.reduce((acc, cur) => acc + cur.bagsOut, 0)
             })
         } catch (error) {
             console.error("Error fetching report:", error);
@@ -240,6 +268,9 @@ console.log(summary)
                                 </div>
                                 <div className="bg-white border shadow rounded-md p-10 flex items-center justify-center w-fit">
                                     <p className="font-medium  flex flex-col text-center"> <span className="font-semibold text-2xl">{summary?.totalBagsOut}</span>Bags Out</p>
+                                </div>
+                                <div className="bg-white border shadow rounded-md p-10 flex items-center justify-center w-fit">
+                                    <p className="font-medium  flex flex-col text-center"> <span className="font-semibold text-2xl">{summary?.remainingBags}</span>Bags remaining</p>
                                 </div>
                             </div>
                             <div className="bg-white rounded-lg  shadow w-full">

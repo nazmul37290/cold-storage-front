@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function CreateStockOut() {
   const router = useRouter();
@@ -18,9 +19,17 @@ export default function CreateStockOut() {
   const [bookings, setBookings] = useState([]);
   const [query, setQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [totalStockIns, setTotalStockIns] = useState();
 
 
-  const handleChange = (e) => {
+  const handleChange = async(e) => {
+    if(e.target.name==="srNo"){
+      setTimeout(async()=>{
+
+        const totalStockIns= await getStockIns(form.bookingNo,e.target.value)
+        setTotalStockIns(totalStockIns);
+      },1000)
+    }
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -49,6 +58,24 @@ export default function CreateStockOut() {
     }
   };
 
+ const getStockIns = async (bookingNo,srNo='') => {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stock-ins`, {
+                params: {
+                     bookingNo,
+                    ...(srNo && { srNo:srNo }),
+                },
+            });
+            const stockIns = response.data.data
+            const totalStockInBags = stockIns.reduce((acc, cur) => acc + cur.bagsIn, 0)
+           return totalStockInBags
+            
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
   useEffect(() => {
     // fetch bookings for combobox
     const fetchBookings = async () => {
@@ -69,7 +96,7 @@ export default function CreateStockOut() {
     ? bookings.filter((b) => (b.bookingNo || "").toLowerCase().includes(query.toLowerCase()))
     : bookings.slice(0, 10);
 
-  const onSelectBooking = (b) => {
+  const onSelectBooking = async(b) => {
     setSelectedBooking(b);
     setForm((prev) => ({
       ...prev,
@@ -78,6 +105,9 @@ export default function CreateStockOut() {
       totalBags: b.qtyOfBags || 0,
     }));
     setQuery(b.bookingNo || b.booking_no || "");
+    const allStockIns=await getStockIns(b.bookingNo,form.srNo);
+    console.log(allStockIns)
+    setTotalStockIns(allStockIns)
   };
 
 
@@ -170,6 +200,10 @@ export default function CreateStockOut() {
         <div>
           <label className="text-sm text-zinc-600 mb-1 block">Total Booked Bags</label>
           <div className="text-sm">{selectedBooking ? (selectedBooking.qtyOfBags ?? "-") : "-"}</div>
+        </div>
+        <div>
+          <label className="text-sm text-zinc-600 mb-1 block">Total Stocked In Bags</label>
+          <div className="text-sm">{totalStockIns ? totalStockIns : "-"}</div>
         </div>
         <div>
           <label className="text-sm text-zinc-600 mb-1 block">Rate</label>
