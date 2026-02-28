@@ -20,17 +20,16 @@ console.log(use(params))
       <h2 className="text-xl font-bold mb-6 text-black">Booking Details</h2>
 
       <div className="grid md:grid-cols-2 gap-4 text-sm">
-        <Field label="SL No" value={booking.sl} />
+        {/* <Field label="SL No" value={booking.sl} /> */}
         <Field label="Booking Type" value={booking.bookingType} />
         <Field label="Booking No" value={booking.bookingNo} />
         <Field label="Customer Name" value={booking.customerName} />
         <Field label="Phone" value={booking.phone} />
         <Field label="Address" value={booking.address} />
-        <Field label="Quantity" value={booking.qty} />
+        <Field label="Quantity" value={booking.qtyOfBags} />
         <Field label="Rate" value={`৳${booking.rate}`} />
         <Field label="Amount" value={`৳${booking.amount}`} />
-        <Field label="Paid" value={`৳${booking.paid}`} />
-        <Field label="Balance" value={`৳${booking.balance}`} />
+        <Field label="Paid" value={`৳${booking.advanceAmount}`} />
         <Field label="Booking Date" value={booking.date} />
       </div>
     </div>
