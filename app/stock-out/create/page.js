@@ -29,6 +29,8 @@ export default function CreateStockOut() {
 
         const totalStockIns= await getStockIns(form.bookingNo,e.target.value)
         setTotalStockIns(totalStockIns);
+        const totalStockOuts= await getStockOuts(form.bookingNo,e.target.value)
+        setTotalStockOuts(totalStockOuts);
       },1000)
     }
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -227,6 +229,10 @@ export default function CreateStockOut() {
         <div>
           <label className="text-sm text-zinc-600 mb-1 block">Total Stocked Out Bags</label>
           <div className="text-sm">{totalStockOuts ? totalStockOuts : "-"}</div>
+        </div>
+        <div>
+          <label className="text-sm text-zinc-600 mb-1 block">Total Remaining Bags</label>
+          <div className="text-sm">{totalStockOuts && totalStockIns ? (totalStockIns- totalStockOuts) : "-"}</div>
         </div>
         <div>
           <label className="text-sm text-zinc-600 mb-1 block">Rate</label>
