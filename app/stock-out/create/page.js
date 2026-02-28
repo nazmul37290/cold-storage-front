@@ -20,6 +20,7 @@ export default function CreateStockOut() {
   const [query, setQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [totalStockIns, setTotalStockIns] = useState();
+  const [totalStockOuts, setTotalStockOuts] = useState();
 
 
   const handleChange = async(e) => {
@@ -75,6 +76,23 @@ export default function CreateStockOut() {
             console.log(err)
         }
     }
+ const getStockOuts = async (bookingNo,srNo='') => {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stock-outs`, {
+                params: {
+                     bookingNo,
+                    ...(srNo && { srNo:srNo }),
+                },
+            });
+            const stockOuts = response.data.data
+            const totalStockOutBags = stockOuts.reduce((acc, cur) => acc + cur.bagsOut, 0)
+           return totalStockOutBags
+            
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
 
   useEffect(() => {
     // fetch bookings for combobox
@@ -106,8 +124,9 @@ export default function CreateStockOut() {
     }));
     setQuery(b.bookingNo || b.booking_no || "");
     const allStockIns=await getStockIns(b.bookingNo,form.srNo);
-    console.log(allStockIns)
+    const allStockOuts=await getStockOuts(b.bookingNo,form.srNo);
     setTotalStockIns(allStockIns)
+    setTotalStockOuts(allStockOuts)
   };
 
 
@@ -204,6 +223,10 @@ export default function CreateStockOut() {
         <div>
           <label className="text-sm text-zinc-600 mb-1 block">Total Stocked In Bags</label>
           <div className="text-sm">{totalStockIns ? totalStockIns : "-"}</div>
+        </div>
+        <div>
+          <label className="text-sm text-zinc-600 mb-1 block">Total Stocked Out Bags</label>
+          <div className="text-sm">{totalStockOuts ? totalStockOuts : "-"}</div>
         </div>
         <div>
           <label className="text-sm text-zinc-600 mb-1 block">Rate</label>
