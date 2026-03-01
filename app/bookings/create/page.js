@@ -8,7 +8,6 @@ export default function CreateBooking() {
   const [error,setError]=useState('')
 
   const [form, setForm] = useState({
-    sl: "",
     bookingType: "normal",
     bookingNo: "",
     customerName: "",
