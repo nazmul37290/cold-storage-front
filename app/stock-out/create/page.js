@@ -38,6 +38,9 @@ export default function CreateStockOut() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if((totalStockIns-totalStockOuts)<form.bagsOut){
+     return alert('Not enough bags remaining');
+    }
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/stock-outs`,
@@ -133,7 +136,7 @@ export default function CreateStockOut() {
 
 
   return (
-    <div className="flex  gap-10">
+    <div className="flex flex-col md:flex-row gap-10">
     <div className="w-full mx-auto bg-white rounded-xl shadow border p-6">
       <h2 className="text-xl font-bold mb-6 text-black">Create Stock Out</h2>
 

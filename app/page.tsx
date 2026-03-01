@@ -8,6 +8,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
 
   const [bookingNo, setBookingNo] = useState("");
+  const [srNo, setSrNo] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -21,6 +22,7 @@ export default function DashboardPage() {
       const params: any = {};
 
       if (bookingNo) params.bookingNo = bookingNo;
+      if (srNo) params.srNo = srNo;   
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
 
@@ -93,7 +95,7 @@ export default function DashboardPage() {
       if (formattedStart) params.startDate = formattedStart;
       if (formattedEnd) params.endDate = formattedEnd;
       if (bookingNo) params.bookingNo = bookingNo;
-
+      if (srNo) params.srNo = srNo; 
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/statistics`,
         { params }
@@ -107,38 +109,49 @@ export default function DashboardPage() {
     }
   };
 
-  const clearAll=async()=>{
-    try{
+  const clearAll = async () => {
+    try {
+      setLoading(true);
 
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/statistics`,
-      { }
-    );
+      setBookingNo("");
+      setSrNo("");        // ✅ added
+      setStartDate("");
+      setEndDate("");
 
-    setStats(res.data.data);
-    setBookingNo('')
-    setStartDate('')
-    setEndDate('')
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-  }
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/statistics`
+      );
+
+      setStats(res.data.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className=" space-y-6">
 
       {/* ================= HEADER ================= */}
-      <div className="flex flex-wrap gap-4 items-end">
+      <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 items-end">
 
         <div>
           <label className="text-sm block mb-1">Booking No</label>
           <input
             value={bookingNo}
             onChange={(e) => setBookingNo(e.target.value)}
-            className="border px-3 py-2 rounded-lg w-48"
+            className="border px-3 py-2 rounded-lg w-full"
             placeholder="Enter booking no"
+          />
+        </div>
+        <div>
+          <label className="text-sm block mb-1">SR No</label>
+          <input
+            value={srNo}
+            onChange={(e) => setSrNo(e.target.value)}
+            className="border px-3 py-2 rounded-lg w-full"
+            placeholder="Enter SR no"
           />
         </div>
 
@@ -148,7 +161,7 @@ export default function DashboardPage() {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="border px-3 py-2 rounded-lg"
+            className="border px-3 py-2 rounded-lg w-full"
           />
         </div>
 
@@ -158,7 +171,7 @@ export default function DashboardPage() {
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="border px-3 py-2 rounded-lg"
+            className="border px-3 py-2 rounded-lg w-full"
           />
         </div>
 

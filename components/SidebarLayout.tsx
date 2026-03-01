@@ -7,9 +7,6 @@ import {
     FiMenu,
     FiHome,
     FiFileText,
-    FiSettings,
-
-    FiUser,
     FiChevronDown,
 } from "react-icons/fi";
 import { FaUsers } from "react-icons/fa6";
@@ -25,6 +22,8 @@ export default function SidebarLayout({ children }: { children: ReactNode }) {
         { name: "Home", href: "/", icon: FiHome },
         { name: "Customers", href: "/customers", icon: FaUsers },
         { name: "Bookings", href: "/bookings", icon: FiFileText },
+        { name: "Stock In", href: "/stock-in", icon: GiExitDoor },
+        { name: "Stock Out", href: "/stock-out", icon: GiEntryDoor },
         {
             name: "Reports", href: "/reports", icon: GoReport, children: [
                 { name: "Booking reports", href: "/booking-reports", icon: FiFileText },
@@ -32,10 +31,7 @@ export default function SidebarLayout({ children }: { children: ReactNode }) {
                 { name: "Stock Out reports", href: "/stockout-reports", icon: FiFileText },
             ]
         },
-        { name: "Stock In", href: "/stock-in", icon: GiExitDoor },
-        { name: "Stock Out", href: "/stock-out", icon: GiEntryDoor },
-        { name: "Profile", href: "/profile", icon: FiUser },
-        { name: "Settings", href: "/settings", icon: FiSettings },
+        
     ];
 
     return (
@@ -50,7 +46,7 @@ export default function SidebarLayout({ children }: { children: ReactNode }) {
 
             {/* ===== Sidebar ===== */}
             <aside
-                className={`fixed lg:static shrink-0 z-50 w-64 bg-white border-r shadow-sm transform transition-transform duration-300
+                className={`fixed lg:static shrink-0 z-50 w-64 min-h-screen bg-white border-r shadow-sm transform transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
             >
                 {/* Logo */}

@@ -85,7 +85,7 @@ export default function CreateStockIn() {
 
 
   return (
-    <div className="flex  gap-10">
+    <div className="flex flex-col md:flex-row gap-10">
     <div className="w-full mx-auto bg-white rounded-xl shadow border p-6">
       <h2 className="text-xl font-bold mb-6 text-black">Create Stock IN</h2>
 

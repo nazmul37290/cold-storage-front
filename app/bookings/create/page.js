@@ -9,20 +9,29 @@ export default function CreateBooking() {
 
   const [form, setForm] = useState({
     sl: "",
-    bookingType: "normal book",
+    bookingType: "normal",
     bookingNo: "",
     customerName: "",
     address: "",
     phone: "",
-    qty:0,
+    qtyOfBags:0,
     rate: 0,
     amount: 0,
+    advanceAmount: 0,
    
     date: new Date().toISOString().split("T")[0],
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    if(e.target.name === 'qtyOfBags' || e.target.name === 'advanceAmount' ){
+
+      setForm({ ...form, [e.target.name]: Number(e.target.value) });
+    }
+    else{
+
+      setForm({ ...form, [e.target.name]: e.target.value });
+    }
+
   };
 
   const handleSubmit = async (e) => {
@@ -36,9 +45,9 @@ try{
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       ...form,
-      qty: Number(form.qty),
+      qty: Number(form.qtyOfBags),
       rate: Number(form.rate),
-      amount: Number(form.qty) * Number(form.rate),
+      amount: Number(form.qtyOfBags) * Number(form.rate),
     
     }),
   });
@@ -65,11 +74,12 @@ try{
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
-        <Input name="sl" label="SL No"  value={form.sl} onChange={handleChange} />
         <Select name="bookingType"
           label="Booking Type"
+          required
           value={form.bookingType}
           onChange={handleChange}>
+            
 
         </Select>
 
@@ -78,12 +88,14 @@ try{
           label="Booking No"
           value={form.bookingNo}
           onChange={handleChange}
+          required
         />
         <Input
           name="customerName"
           label="Customer Name"
           value={form.customerName}
           onChange={handleChange}
+          required
         />
 
         <Input
@@ -91,20 +103,23 @@ try{
           label="Address"
           value={form.address}
           onChange={handleChange}
+          required
         />
         <Input
           name="phone"
           label="Phone"
           value={form.phone}
           onChange={handleChange}
+          required
         />
 
         <Input
-          name="qty"
+          name="qtyOfBags"
           label="Quantity"
           type="number"
-          value={form.qty}
+          value={form.qtyOfBags}
           onChange={handleChange}
+          required
         />
         <Input
           name="rate"
@@ -112,15 +127,24 @@ try{
           type="number"
           value={form.rate}
           onChange={handleChange}
+          required
+        />
+        <Input
+          name="advanceAmount"
+          label="Advance"
+          type="number"
+          value={form.advanceAmount}
+          onChange={handleChange}
+          
         />
 
         <Input
           name="amount"
           label="Amount"
           type="number"
-          value={form.qty * form.rate}
+          value={form.qtyOfBags * form.rate}
           readonly
-         
+         required
         />
         
 
@@ -131,6 +155,7 @@ try{
           type="date"
           value={form.date}
           onChange={handleChange}
+          required
         />
 
         <div className="md:col-span-2 flex justify-end mt-4">
@@ -167,8 +192,8 @@ function Select({ label, ...props }) {
         {...props}
         className="w-full border text-black rounded-lg px-3 py-2 border-zinc-300"
       >
-        <option  value="normal book">Normal Book</option>
-        <option value="paid book">Paid Book</option>
+        <option  value="normal">Normal</option>
+        <option value="paid">Paid Book</option>
        
       </select>
     </div>

@@ -192,7 +192,7 @@ console.log(stockIns,'stockins')
                             <CardTitle>Individual Date Report</CardTitle>
                         </CardHeader>
                         <div className="p-6 space-y-4">
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-slate-700">
                                         Select Start Date
@@ -388,7 +388,7 @@ console.log(stockIns,'stockins')
                             <CardTitle>Metadata Report</CardTitle>
                         </CardHeader>
                         <div className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-slate-700">
                                         Start Date
