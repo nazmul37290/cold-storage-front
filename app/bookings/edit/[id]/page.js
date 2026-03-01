@@ -28,14 +28,14 @@ export default function EditBooking({ params }) {
       .then((res) => res.json())
       .then(({data}) => {
         setForm({
-          bookingType: data.bookingType || "Normal",
+          bookingType: data.bookingType || "normal",
           bookingNo: data.bookingNo || "",
           customerName: data.customerName || "",
           address: data.address || "",
           phone: data.phone || "",
-          qtyOfBags: data.qtyOfBags || "",
+          qtyOfBags: data.qtyOfBags || 0,
           rate: data.rate || "",
-          advanceAmount: data.advanceAmount || "",
+          advanceAmount: data.advanceAmount || 0,
        
           date: data.date?.split("T")[0] || "",
         });
@@ -44,8 +44,14 @@ export default function EditBooking({ params }) {
   }, [id]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+if(e.target.name === 'qtyOfBags' || e.target.name === 'advanceAmount' ){
+
+      setForm({ ...form, [e.target.name]: Number(e.target.value) });
+    }
+    else{
+
+      setForm({ ...form, [e.target.name]: e.target.value });
+    }  };
 
   // ✅ Update API
   const handleSubmit = async (e) => {
